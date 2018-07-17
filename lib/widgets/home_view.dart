@@ -5,12 +5,15 @@
  .
  . As part of the PhotoBooth project
  .
- . Last modified : 14/07/18 11:33
+ . Last modified : 17/07/18 01:47
  .
  . Contact : contact.alexandre.bolot@gmail.com
  ........................................................................*/
 
 import 'package:flutter/material.dart';
+import 'package:photo_booth/config.dart';
+import 'package:photo_booth/services/gallery_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeView extends StatefulWidget {
   @override
@@ -18,6 +21,15 @@ class HomeView extends StatefulWidget {
 }
 
 class HomeViewState extends State<HomeView> {
+  TextEditingController _collectionNameController = TextEditingController();
+  TextEditingController _userNameController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPreferences();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,7 +39,7 @@ class HomeViewState extends State<HomeView> {
       body: Center(
         child: Card(
           elevation: 8.0,
-          margin: EdgeInsets.all(40.0),
+          margin: EdgeInsets.symmetric(horizontal: 40.0),
           child: Padding(
             padding: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 16.0),
             child: Column(
@@ -35,15 +47,18 @@ class HomeViewState extends State<HomeView> {
               children: [
                 Container(
                   child: TextField(
+                    controller: _collectionNameController,
                     decoration: InputDecoration(
                       labelText: "Code de l'évènement",
                     ),
                   ),
                   margin: EdgeInsets.only(bottom: 14.0),
-                ),Container(
+                ),
+                Container(
                   child: TextField(
+                    controller: _userNameController,
                     decoration: InputDecoration(
-                      labelText: "Nom Prénom",
+                      labelText: "Nom et Prénom",
                     ),
                   ),
                   margin: EdgeInsets.only(bottom: 14.0),
@@ -54,9 +69,7 @@ class HomeViewState extends State<HomeView> {
                     "C'est parti !",
                     style: TextStyle(color: Colors.white),
                   ),
-                  onPressed: () {
-                    Navigator.of(context).pushNamed('/CameraView');
-                  },
+                  onPressed: _login,
                 )
               ],
             ),
@@ -64,5 +77,20 @@ class HomeViewState extends State<HomeView> {
         ),
       ),
     );
+  }
+
+  _loadPreferences() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    _collectionNameController.text = pref.getString('collectionName') ?? '';
+    _userNameController.text = pref.getString('userName') ?? '';
+  }
+
+  _login() async {
+    final String code = _collectionNameController.text.toLowerCase().trim();
+    final String name = _userNameController.text.toLowerCase().trim();
+
+    GalleryService().login(code, name).then((success) {
+      if (success) Navigator.of(context).pushNamed(galleryView);
+    });
   }
 }
