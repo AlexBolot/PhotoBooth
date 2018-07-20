@@ -5,7 +5,7 @@
  .
  . As part of the PhotoBooth project
  .
- . Last modified : 20/07/18 01:42
+ . Last modified : 20/07/18 03:16
  .
  . Contact : contact.alexandre.bolot@gmail.com
  ........................................................................*/
@@ -31,8 +31,6 @@ class GalleryService {
   static String _collectionName;
   static String _userName;
 
-  List<GalleryItem> _galleryItems = [];
-
   Future<bool> login(String code, String name) async {
     if (code.isNotEmpty && name.isNotEmpty) {
       await _auth.signInAnonymously();
@@ -51,15 +49,15 @@ class GalleryService {
 
   streamThumbnailPaths(void callback(List<GalleryItem> items)) {
     _firestore.collection(_collectionName).snapshots().listen((querySnapshot) {
-      _galleryItems.clear();
+      List<GalleryItem> galleryItems = [];
 
       print('>> found ${querySnapshot.documents.length} picture(s)');
 
       querySnapshot.documents.forEach((document) {
-        _galleryItems.add(GalleryItem.fromSnapshot(document));
+        galleryItems.add(GalleryItem.fromSnapshot(document));
       });
 
-      callback(_galleryItems);
+      callback(galleryItems);
     });
   }
 
@@ -98,8 +96,6 @@ class GalleryService {
       userName: _userName,
       thumbnailUrl: uploadImage.downloadUrl.toString(),
     );
-
-    _galleryItems.add(galleryItem);
 
     DocumentReference ref = _firestore.collection(_collectionName).document();
 
@@ -144,13 +140,17 @@ class GalleryService {
   _getTime() => DateTime.now().millisecondsSinceEpoch;
 
   Future<File> downloadFile(String url, String filename) async {
-    HttpClientRequest request = await httpClient.getUrl(Uri.parse(url));
-    HttpClientResponse response = await request.close();
-    Uint8List bytes = await consolidateHttpClientResponseBytes(response);
+    if (url != null) {
+      HttpClientRequest request = await httpClient.getUrl(Uri.parse(url));
+      HttpClientResponse response = await request.close();
+      Uint8List bytes = await consolidateHttpClientResponseBytes(response);
 
-    String dir = (await getApplicationDocumentsDirectory()).path;
-    File file = File('$dir/$filename');
+      String dir = (await getApplicationDocumentsDirectory()).path;
+      File file = File('$dir/$filename');
 
-    return await file.writeAsBytes(bytes);
+      return await file.writeAsBytes(bytes);
+    }
+
+    return null;
   }
 }

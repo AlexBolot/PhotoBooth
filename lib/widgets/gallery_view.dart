@@ -5,7 +5,7 @@
  .
  . As part of the PhotoBooth project
  .
- . Last modified : 20/07/18 02:57
+ . Last modified : 20/07/18 03:24
  .
  . Contact : contact.alexandre.bolot@gmail.com
  ........................................................................*/
@@ -18,16 +18,16 @@ import 'package:photo_booth/services/gallery_service.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:photo_booth/widgets/detailed_view.dart';
 
+List<GalleryItem> galleryItems = [];
+
 class GalleryView extends StatefulWidget {
   @override
   _GalleryViewState createState() => _GalleryViewState();
 }
 
 class _GalleryViewState extends State<GalleryView> {
-  List<GalleryItem> _galleryItems = [];
-
   _refresh(List<GalleryItem> thumbnailPaths) {
-    setState(() => _galleryItems = thumbnailPaths);
+    setState(() => galleryItems = thumbnailPaths);
   }
 
   _pickImage() async {
@@ -57,7 +57,7 @@ class _GalleryViewState extends State<GalleryView> {
         mainAxisSpacing: 8.0,
         crossAxisSpacing: 8.0,
         crossAxisCount: 2,
-        children: _galleryItems.map((item) {
+        children: galleryItems.map((item) {
           if (item.thumbnailUrl == null) return Container();
           return Hero(
             tag: item.imageName ?? '',
@@ -79,8 +79,8 @@ class _GalleryViewState extends State<GalleryView> {
   }
 
   _goToDetailedView(GalleryItem item) {
-    Navigator
-        .of(context)
-        .push(MaterialPageRoute(builder: (context) => DetailedView(item)));
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return DetailedView(galleryItems.indexOf(item));
+    }));
   }
 }
