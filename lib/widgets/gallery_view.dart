@@ -5,7 +5,7 @@
  .
  . As part of the PhotoBooth project
  .
- . Last modified : 20/07/18 03:24
+ . Last modified : 20/07/18 03:57
  .
  . Contact : contact.alexandre.bolot@gmail.com
  ........................................................................*/
@@ -52,11 +52,11 @@ class _GalleryViewState extends State<GalleryView> {
 
     return Scaffold(
       appBar: AppBar(title: Text('Photo Booth')),
-      body: GridView.count(
+      body: GridView.extent(
         padding: const EdgeInsets.all(16.0),
         mainAxisSpacing: 8.0,
         crossAxisSpacing: 8.0,
-        crossAxisCount: 2,
+        maxCrossAxisExtent: 200.0,
         children: galleryItems.map((item) {
           if (item.thumbnailUrl == null) return Container();
           return Hero(
