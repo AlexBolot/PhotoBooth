@@ -5,17 +5,19 @@
  .
  . As part of the PhotoBooth project
  .
- . Last modified : 18/07/18 11:32
+ . Last modified : 20/07/18 01:42
  .
  . Contact : contact.alexandre.bolot@gmail.com
  ........................................................................*/
 
 import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:photo_booth/models/gallery_item.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -25,6 +27,7 @@ class GalleryService {
   static final FirebaseStorage _storage = FirebaseStorage.instance;
   static final Firestore _firestore = Firestore.instance;
   static final FirebaseAuth _auth = FirebaseAuth.instance;
+  static final HttpClient httpClient = HttpClient();
   static String _collectionName;
   static String _userName;
 
@@ -50,7 +53,7 @@ class GalleryService {
     _firestore.collection(_collectionName).snapshots().listen((querySnapshot) {
       _galleryItems.clear();
 
-      print('found ${querySnapshot.documents.length} picture(s)');
+      print('>> found ${querySnapshot.documents.length} picture(s)');
 
       querySnapshot.documents.forEach((document) {
         _galleryItems.add(GalleryItem.fromSnapshot(document));
@@ -61,9 +64,13 @@ class GalleryService {
   }
 
   mainUpload(File fullImage) async {
-    String fileName = '$_userName${DateTime.now().toIso8601String()}.png';
+    String fileName = '$_userName${DateTime.now().toIso8601String()}';
+
+    int startTime = _getTime();
 
     plugin.Image thumbnail = plugin.decodeJpg(fullImage.readAsBytesSync());
+
+    print('>> decoded image in ${(_getTime() - startTime) / 1000}s');
 
     DocumentReference ref = await uploadThumbnail(thumbnail, fileName);
 
@@ -71,13 +78,20 @@ class GalleryService {
   }
 
   Future uploadThumbnail(plugin.Image thumbnail, String fileName) async {
+    int startTime = _getTime();
 
-    thumbnail = plugin.copyResize(thumbnail, 160);
+    thumbnail = plugin.copyResize(thumbnail, 400);
+
+    print('>> resized thumbnail in ${(_getTime() - startTime) / 1000}s');
+
+    File file = await createFile(thumbnail, fileName);
+
+    startTime = _getTime();
 
     UploadTaskSnapshot uploadImage = await _storage
         .ref()
-        .child('$_collectionName/Thumbnails/$fileName')
-        .putFile(await createFile(thumbnail, fileName))
+        .child('$_collectionName/Thumbnails/$fileName.jpg')
+        .putFile(file)
         .future;
 
     GalleryItem galleryItem = GalleryItem(
@@ -91,27 +105,52 @@ class GalleryService {
 
     await ref.setData(galleryItem.toMap());
 
+    print('>> uploaded thumbnail in ${(_getTime() - startTime) / 1000}s');
+
     return ref;
   }
 
   Future<File> createFile(plugin.Image image, String fileName) async {
+    int startTime = _getTime();
 
     Directory directory = await getApplicationDocumentsDirectory();
 
     File file = File(directory.path + Platform.pathSeparator + fileName)
       ..createSync()
-      ..writeAsBytesSync(plugin.encodePng(image));
+      ..writeAsBytesSync(plugin.encodeJpg(image, quality: 70));
+
+    print('>> created file in ${(_getTime() - startTime) / 1000}s');
 
     return file;
   }
 
   uploadImage(File fullImage, DocumentReference ref, String fileName) async {
+    int startTime = _getTime();
+
     UploadTaskSnapshot uploadImage = await _storage
         .ref()
-        .child('$_collectionName/Images/$fileName')
+        .child('$_collectionName/Images/$fileName.jpg')
         .putFile(fullImage)
         .future;
 
-    ref.updateData({'imageUrl': uploadImage.downloadUrl.toString()});
+    ref.updateData({
+      'imageUrl': uploadImage.downloadUrl.toString(),
+      'imageName': '$fileName.jpg',
+    });
+
+    print('>> uploaded full size image in ${(_getTime() - startTime) / 1000}s');
+  }
+
+  _getTime() => DateTime.now().millisecondsSinceEpoch;
+
+  Future<File> downloadFile(String url, String filename) async {
+    HttpClientRequest request = await httpClient.getUrl(Uri.parse(url));
+    HttpClientResponse response = await request.close();
+    Uint8List bytes = await consolidateHttpClientResponseBytes(response);
+
+    String dir = (await getApplicationDocumentsDirectory()).path;
+    File file = File('$dir/$filename');
+
+    return await file.writeAsBytes(bytes);
   }
 }

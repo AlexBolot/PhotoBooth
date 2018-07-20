@@ -5,7 +5,7 @@
  .
  . As part of the PhotoBooth project
  .
- . Last modified : 18/07/18 11:39
+ . Last modified : 20/07/18 02:57
  .
  . Contact : contact.alexandre.bolot@gmail.com
  ........................................................................*/
@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:photo_booth/models/gallery_item.dart';
 import 'package:photo_booth/services/gallery_service.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:photo_booth/widgets/detailed_view.dart';
 
 class GalleryView extends StatefulWidget {
   @override
@@ -58,15 +59,28 @@ class _GalleryViewState extends State<GalleryView> {
         crossAxisCount: 2,
         children: _galleryItems.map((item) {
           if (item.thumbnailUrl == null) return Container();
-          return Card(
-            child: Image.network(
-              item.thumbnailUrl,
-              fit: BoxFit.fitWidth,
+          return Hero(
+            tag: item.imageName ?? '',
+            child: GestureDetector(
+              onTap: () => _goToDetailedView(item),
+              child: Card(
+                elevation: 8.0,
+                child: Image.network(
+                  item.thumbnailUrl,
+                  fit: BoxFit.fitWidth,
+                ),
+              ),
             ),
           );
         }).toList(),
       ),
       floatingActionButton: button,
     );
+  }
+
+  _goToDetailedView(GalleryItem item) {
+    Navigator
+        .of(context)
+        .push(MaterialPageRoute(builder: (context) => DetailedView(item)));
   }
 }
