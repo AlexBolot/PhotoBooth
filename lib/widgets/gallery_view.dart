@@ -5,7 +5,7 @@
  .
  . As part of the PhotoBooth project
  .
- . Last modified : 20/07/18 03:57
+ . Last modified : 22/07/18 03:34
  .
  . Contact : contact.alexandre.bolot@gmail.com
  ........................................................................*/
@@ -67,7 +67,7 @@ class _GalleryViewState extends State<GalleryView> {
                 elevation: 8.0,
                 child: Image.network(
                   item.thumbnailUrl,
-                  fit: BoxFit.fitWidth,
+                  fit: BoxFit.cover,
                 ),
               ),
             ),

@@ -16,6 +16,9 @@ dependencies:
   intl:
   path_provider:
   image:
+  share:
+    git:
+      url: https://github.com/d-silveira/flutter-share.git
 
 dev_dependencies:
   flutter_test:

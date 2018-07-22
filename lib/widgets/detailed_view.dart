@@ -5,14 +5,16 @@
  .
  . As part of the PhotoBooth project
  .
- . Last modified : 20/07/18 03:55
+ . Last modified : 22/07/18 03:31
  .
  . Contact : contact.alexandre.bolot@gmail.com
  ........................................................................*/
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:photo_booth/models/gallery_item.dart';
 import 'package:photo_booth/widgets/gallery_view.dart';
+import 'package:share/share.dart';
 
 class DetailedView extends StatefulWidget {
   final int itemIndex;
@@ -64,14 +66,14 @@ class _DetailedViewState extends State<DetailedView> {
                           backgroundColor: Colors.white,
                           foregroundColor: Colors.blue,
                           child: Icon(Icons.cloud_download, size: 40.0),
-                          onPressed: () => print('asked to download'),
+                          onPressed: () => _download(),
                         ),
                         FloatingActionButton(
                           heroTag: null,
                           backgroundColor: Colors.white,
                           foregroundColor: Colors.blue,
                           child: Icon(Icons.share, size: 40.0),
-                          onPressed: () => print('asked to share'),
+                          onPressed: () => _share(),
                         )
                       ],
                     ),
@@ -133,5 +135,14 @@ class _DetailedViewState extends State<DetailedView> {
   _goBack() {
     setState(() => _render = false);
     Navigator.of(context).pop();
+  }
+
+  _download() async {
+    print('awww :(');
+  }
+
+  _share() {
+    final channel = const MethodChannel('channel:alexandre.bolot/share_image');
+    channel.invokeMethod('shareFilePath', _galleryItem.imageName);
   }
 }

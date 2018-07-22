@@ -5,7 +5,7 @@
  .
  . As part of the PhotoBooth project
  .
- . Last modified : 20/07/18 03:16
+ . Last modified : 22/07/18 02:20
  .
  . Contact : contact.alexandre.bolot@gmail.com
  ........................................................................*/
@@ -145,8 +145,10 @@ class GalleryService {
       HttpClientResponse response = await request.close();
       Uint8List bytes = await consolidateHttpClientResponseBytes(response);
 
-      String dir = (await getApplicationDocumentsDirectory()).path;
+      String dir = (await getTemporaryDirectory()).path;
       File file = File('$dir/$filename');
+
+      print('>> Downloaded file : ${file.path}');
 
       return await file.writeAsBytes(bytes);
     }

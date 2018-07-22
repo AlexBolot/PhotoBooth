@@ -1,4 +1,17 @@
+<!--.......................................................................
+  . Copyright (c)
+  .
+  . The AndroidManifest.xml class was created by : Alex Bolot and Pierre Bolot
+  .
+  . As part of the PhotoBooth project
+  .
+  . Last modified : 22/07/18 03:21
+  .
+  . Contact : contact.alexandre.bolot@gmail.com
+  ......................................................................-->
+
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="alexandre.bolot.photobooth">
 
     <!-- The INTERNET permission is required for development. Specifically,
@@ -16,6 +29,19 @@
         android:name="io.flutter.app.FlutterApplication"
         android:label="photo_booth"
         android:icon="@mipmap/ic_launcher">
+
+        <provider
+            android:name="alexandre.bolot.photobooth.MyCustomFileProvider"
+            android:authorities="alexandre.bolot"
+            android:exported="false"
+            android:grantUriPermissions="true"
+            >
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths"
+                />
+        </provider>
+
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

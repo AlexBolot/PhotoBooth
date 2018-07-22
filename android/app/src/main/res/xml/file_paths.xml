@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--.......................................................................
+  . Copyright (c)
+  .
+  . The file_paths.xml class was created by : Alex Bolot and Pierre Bolot
+  .
+  . As part of the PhotoBooth project
+  .
+  . Last modified : 22/07/18 02:20
+  .
+  . Contact : contact.alexandre.bolot@gmail.com
+  ......................................................................-->
+
+<paths>
+    <cache-path
+        name="images"
+        path="/" />
+</paths>
