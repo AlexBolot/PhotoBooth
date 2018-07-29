@@ -1,3 +1,15 @@
+/*.........................................................................
+ . Copyright (c)
+ .
+ . The build class was created by : Alex Bolot and Pierre Bolot
+ .
+ . As part of the PhotoBooth project
+ .
+ . Last modified : 29/07/18 17:39
+ .
+ . Contact : contact.alexandre.bolot@gmail.com
+ ........................................................................*/
+
 buildscript {
     repositories {
         google()
@@ -5,7 +17,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.2'
+        classpath 'com.android.tools.build:gradle:3.1.3'
         classpath 'com.google.gms:google-services:4.0.0'
     }
 }

@@ -5,12 +5,13 @@
  .
  . As part of the PhotoBooth project
  .
- . Last modified : 22/07/18 03:21
+ . Last modified : 30/07/18 00:21
  .
  . Contact : contact.alexandre.bolot@gmail.com
  ........................................................................*/
 
 package alexandre.bolot.photobooth;
+
 
 import android.content.Intent;
 import android.net.Uri;
@@ -51,7 +52,7 @@ public class MainActivity extends FlutterActivity {
 
 
     private void shareFilePath(String path) {
-        File imageFile = new File(this.getApplicationContext().getCacheDir(), path);
+        File imageFile = new File(getApplicationContext().getCacheDir(), path);
         Uri contentUri = FileProvider.getUriForFile(this, "alexandre.bolot", imageFile);
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("image/jpg");
