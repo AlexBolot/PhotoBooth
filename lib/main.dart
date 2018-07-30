@@ -5,7 +5,7 @@
  .
  . As part of the PhotoBooth project
  .
- . Last modified : 17/07/18 02:57
+ . Last modified : 30/07/18 13:42
  .
  . Contact : contact.alexandre.bolot@gmail.com
  ........................................................................*/
@@ -21,6 +21,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(
+        brightness: Brightness.light,
+        primaryColor: Colors.red[800],
+        accentColor: Colors.red[400],
+      ),
       routes: {
         '/': (context) => HomeView(),
         homeView: (context) => HomeView(),

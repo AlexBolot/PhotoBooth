@@ -5,7 +5,7 @@
  .
  . As part of the PhotoBooth project
  .
- . Last modified : 30/07/18 00:21
+ . Last modified : 30/07/18 13:51
  .
  . Contact : contact.alexandre.bolot@gmail.com
  ........................................................................*/
@@ -66,15 +66,15 @@ class _DetailedViewState extends State<DetailedView> {
                       children: <Widget>[
                         FloatingActionButton(
                           heroTag: null,
-                          backgroundColor: Colors.white,
-                          foregroundColor: Colors.blue,
+                          foregroundColor: Colors.white,
+                          backgroundColor: Theme.of(context).primaryColor,
                           child: Icon(Icons.cloud_download, size: 40.0),
                           onPressed: () => _download(),
                         ),
                         FloatingActionButton(
                           heroTag: null,
-                          backgroundColor: Colors.white,
-                          foregroundColor: Colors.blue,
+                          foregroundColor: Colors.white,
+                          backgroundColor: Theme.of(context).primaryColor,
                           child: Icon(Icons.share, size: 40.0),
                           onPressed: () => _share(),
                         )
@@ -114,11 +114,6 @@ class _DetailedViewState extends State<DetailedView> {
     if (lastDelta > 3.0) _getPrevious();
   }
 
-  _handleVertDrag() {
-    if (lastDelta < -3.0) _getNext();
-    if (lastDelta > 3.0) _getPrevious();
-  }
-
   _getPrevious() {
     if (itemIndex > 0)
       setState(() => _galleryItem = galleryItems[--itemIndex]);
@@ -146,8 +141,7 @@ class _DetailedViewState extends State<DetailedView> {
   }
 
   _download() async {
-
-    Permission permission = Permission.ReadExternalStorage;
+    Permission permission = Permission.WriteExternalStorage;
 
     bool granted = await SimplePermissions.checkPermission(permission);
     print('permission is ${granted ? 'granted' : 'denied'}');
@@ -157,7 +151,7 @@ class _DetailedViewState extends State<DetailedView> {
       print('permission is ${granted ? 'granted' : 'denied'}');
     }
 
-    if(!granted) return;
+    if (!granted) return;
 
     Directory externalDir = await getExternalStorageDirectory();
 

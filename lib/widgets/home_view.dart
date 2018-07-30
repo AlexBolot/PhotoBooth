@@ -5,7 +5,7 @@
  .
  . As part of the PhotoBooth project
  .
- . Last modified : 17/07/18 01:47
+ . Last modified : 30/07/18 13:44
  .
  . Contact : contact.alexandre.bolot@gmail.com
  ........................................................................*/
@@ -64,7 +64,7 @@ class HomeViewState extends State<HomeView> {
                   margin: EdgeInsets.only(bottom: 14.0),
                 ),
                 RaisedButton(
-                  color: Colors.blue,
+                  color: Theme.of(context).primaryColor,
                   child: Text(
                     "C'est parti !",
                     style: TextStyle(color: Colors.white),
