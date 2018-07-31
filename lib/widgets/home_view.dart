@@ -5,7 +5,7 @@
  .
  . As part of the PhotoBooth project
  .
- . Last modified : 30/07/18 13:44
+ . Last modified : 31/07/18 14:23
  .
  . Contact : contact.alexandre.bolot@gmail.com
  ........................................................................*/
@@ -34,7 +34,13 @@ class HomeViewState extends State<HomeView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Center(child: Text('Photo Booth')),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(40.0),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: 95.0),
+            child: Image.asset('assets/PhotoBoothLogo.png', fit: BoxFit.cover),
+          ),
+        ),
       ),
       body: Center(
         child: Card(
