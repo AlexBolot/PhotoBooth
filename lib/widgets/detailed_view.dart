@@ -5,7 +5,7 @@
  .
  . As part of the PhotoBooth project
  .
- . Last modified : 30/07/18 13:51
+ . Last modified : 31/07/18 15:01
  .
  . Contact : contact.alexandre.bolot@gmail.com
  ........................................................................*/
@@ -47,44 +47,48 @@ class _DetailedViewState extends State<DetailedView> {
   Widget build(BuildContext context) {
     return _render
         ? Scaffold(
-            backgroundColor: Colors.black,
-            body: Hero(
-              tag: _galleryItem.imageName ?? '',
-              child: Stack(
-                alignment: Alignment(0.0, 1.0),
+      backgroundColor: Colors.black,
+      body: Hero(
+        tag: _galleryItem.imageName ?? '',
+        child: Stack(
+          alignment: Alignment(0.0, 1.0),
+          children: <Widget>[
+            GestureDetector(
+                onDoubleTap: _goBack,
+                onHorizontalDragUpdate: _updateLastDrag,
+                onVerticalDragEnd: (details) => _goBack(),
+                onHorizontalDragEnd: (details) => _handleHorizDrag(),
+                child: imageDisplay()),
+            Container(
+              padding: EdgeInsets.only(top: 50.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-                  GestureDetector(
-                      onDoubleTap: _goBack,
-                      onHorizontalDragUpdate: _updateLastDrag,
-                      onVerticalDragEnd: (details) => _goBack(),
-                      onHorizontalDragEnd: (details) => _handleHorizDrag(),
-                      child: imageDisplay()),
-                  Container(
-                    padding: EdgeInsets.only(top: 50.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        FloatingActionButton(
-                          heroTag: null,
-                          foregroundColor: Colors.white,
-                          backgroundColor: Theme.of(context).primaryColor,
-                          child: Icon(Icons.cloud_download, size: 40.0),
-                          onPressed: () => _download(),
-                        ),
-                        FloatingActionButton(
-                          heroTag: null,
-                          foregroundColor: Colors.white,
-                          backgroundColor: Theme.of(context).primaryColor,
-                          child: Icon(Icons.share, size: 40.0),
-                          onPressed: () => _share(),
-                        )
-                      ],
-                    ),
+                  FloatingActionButton(
+                    heroTag: null,
+                    foregroundColor: Colors.white,
+                    backgroundColor: Theme
+                        .of(context)
+                        .primaryColor,
+                    child: Icon(Icons.cloud_download, size: 40.0),
+                    onPressed: () => _download(),
                   ),
+                  FloatingActionButton(
+                    heroTag: null,
+                    foregroundColor: Colors.white,
+                    backgroundColor: Theme
+                        .of(context)
+                        .primaryColor,
+                    child: Icon(Icons.share, size: 40.0),
+                    onPressed: () => _share(),
+                  )
                 ],
               ),
             ),
-          )
+          ],
+        ),
+      ),
+    )
         : Container();
   }
 
@@ -94,15 +98,15 @@ class _DetailedViewState extends State<DetailedView> {
         : 'File'} : ${_galleryItem.imageName}');
     return _galleryItem.imageFile != null
         ? Image.file(_galleryItem.imageFile,
-            fit: BoxFit.contain,
-            height: double.infinity,
-            width: double.infinity,
-            alignment: Alignment.center)
+        fit: BoxFit.contain,
+        height: double.infinity,
+        width: double.infinity,
+        alignment: Alignment.center)
         : Image.network(_galleryItem.imageUrl,
-            fit: BoxFit.contain,
-            height: double.infinity,
-            width: double.infinity,
-            alignment: Alignment.center);
+        fit: BoxFit.contain,
+        height: double.infinity,
+        width: double.infinity,
+        alignment: Alignment.center);
   }
 
   _updateLastDrag(DragUpdateDetails details) {
@@ -155,14 +159,25 @@ class _DetailedViewState extends State<DetailedView> {
 
     Directory externalDir = await getExternalStorageDirectory();
 
+    print('ExtDir path : $externalDir');
+
     Directory photoBoothDir = Directory(externalDir.path + '/PhotoBooth/');
 
-    if (!photoBoothDir.existsSync()) photoBoothDir.createSync();
+    print('PhotoBooth path : $photoBoothDir');
 
+    if (!photoBoothDir.existsSync()) {
+      print("PhotoBooth doesn't exist !");
+      photoBoothDir.createSync();
+    }
+    else {
+      print("PhotoBooth exists !");
+    }
     File file = File(photoBoothDir.path + _galleryItem.imageName);
 
     file.createSync();
 
     file.writeAsBytes(_galleryItem.imageFile.readAsBytesSync());
+
+    _goBack();
   }
 }
