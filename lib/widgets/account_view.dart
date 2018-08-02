@@ -5,14 +5,14 @@
  .
  . As part of the PhotoBooth project
  .
- . Last modified : 02/08/18 16:58
+ . Last modified : 02/08/18 23:11
  .
  . Contact : contact.alexandre.bolot@gmail.com
  ........................................................................*/
 
 import 'package:flutter/material.dart';
-import 'package:photo_booth/widgets/minor_widgets/guest_loging_card.dart';
-import 'package:photo_booth/widgets/minor_widgets/login_card.dart';
+import 'package:photo_booth/widgets/minor_widgets/guest_card.dart';
+import 'package:photo_booth/widgets/minor_widgets/manager_card.dart';
 import 'package:photo_booth/widgets/minor_widgets/sign_up_card.dart';
 
 class AccountView extends StatefulWidget {
@@ -37,10 +37,17 @@ class _AccountViewState extends State<AccountView> {
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: ListView(
           children: <Widget>[
-            Container(height: 8.0,),
-            GuestLoginCard(),
-            LoginCard(),
-            SignUpCard(),
+            ConstrainedBox(
+              constraints: BoxConstraints(minHeight: 475.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  GuestCard(),
+                  ManagerCard(),
+                ],
+              ),
+            ),
+            //SignUpCard(),
           ],
         ),
       ),

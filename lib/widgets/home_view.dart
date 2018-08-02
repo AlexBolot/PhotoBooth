@@ -5,7 +5,7 @@
  .
  . As part of the PhotoBooth project
  .
- . Last modified : 02/08/18 03:35
+ . Last modified : 02/08/18 22:17
  .
  . Contact : contact.alexandre.bolot@gmail.com
  ........................................................................*/
@@ -96,7 +96,7 @@ class HomeViewState extends State<HomeView> {
     String code = _collectionNameController.text.toLowerCase().trim();
     String name = _userNameController.text.toLowerCase().trim();
 
-    bool success = await UserService.login(code, name);
+    bool success = await UserService.loginAnonymously(code, name);
 
     if (success) Navigator.of(context).pushNamed(galleryView);
   }
