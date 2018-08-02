@@ -5,7 +5,7 @@
  .
  . As part of the PhotoBooth project
  .
- . Last modified : 02/08/18 03:35
+ . Last modified : 02/08/18 15:49
  .
  . Contact : contact.alexandre.bolot@gmail.com
  ........................................................................*/
@@ -32,7 +32,6 @@ class DetailedView extends StatefulWidget {
 class _DetailedViewState extends State<DetailedView> {
   bool _render;
   double lastDelta;
-  int itemIndex;
   GalleryItem item;
 
   _DetailedViewState(this.item);
@@ -41,7 +40,6 @@ class _DetailedViewState extends State<DetailedView> {
   void initState() {
     super.initState();
     _render = true;
-    itemIndex = GalleryService.indexOf(item);
   }
 
   @override
@@ -113,17 +111,19 @@ class _DetailedViewState extends State<DetailedView> {
   }
 
   _getPrevious() {
-    if (itemIndex > 0)
-      setState(() => item = GalleryService.getItem(--itemIndex));
+    GalleryItem previous = GalleryService.getPrevious(item);
+
+    if (previous != null)
+      setState(() => item = previous);
     else
       _goBack();
   }
 
   _getNext() {
-    int maxIndex = GalleryService.galleryItems.length - 1;
+    GalleryItem next = GalleryService.getNext(item);
 
-    if (itemIndex < maxIndex)
-      setState(() => item = GalleryService.getItem(++itemIndex));
+    if (next != null)
+      setState(() => item = next);
     else
       _goBack();
   }

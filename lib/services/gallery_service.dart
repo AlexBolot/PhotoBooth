@@ -5,7 +5,7 @@
  .
  . As part of the PhotoBooth project
  .
- . Last modified : 02/08/18 03:35
+ . Last modified : 02/08/18 15:49
  .
  . Contact : contact.alexandre.bolot@gmail.com
  ........................................................................*/
@@ -69,6 +69,19 @@ class GalleryService {
     }
 
     return null;
+  }
+
+  static GalleryItem getNext(GalleryItem item) {
+    int maxIndex = galleryItems.length - 1;
+    int itemIndex = galleryItems.indexOf(item);
+
+    return itemIndex < maxIndex ? getItem(++itemIndex) : null;
+  }
+
+  static GalleryItem getPrevious(GalleryItem item) {
+    int itemIndex = galleryItems.indexOf(item);
+
+    return itemIndex > 0 ? getItem(--itemIndex) : null;
   }
 
   static int indexOf(GalleryItem item) => galleryItems.indexOf(item);
