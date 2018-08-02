@@ -5,7 +5,7 @@
  .
  . As part of the PhotoBooth project
  .
- . Last modified : 31/07/18 15:01
+ . Last modified : 02/08/18 03:35
  .
  . Contact : contact.alexandre.bolot@gmail.com
  ........................................................................*/
@@ -16,97 +16,91 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:photo_booth/models/gallery_item.dart';
+import 'package:photo_booth/services/gallery_service.dart';
 import 'package:photo_booth/widgets/gallery_view.dart';
 import 'package:simple_permissions/simple_permissions.dart';
 
 class DetailedView extends StatefulWidget {
-  final int itemIndex;
+  final GalleryItem item;
 
-  DetailedView(this.itemIndex);
+  DetailedView(this.item);
 
   @override
-  _DetailedViewState createState() => _DetailedViewState(itemIndex);
+  _DetailedViewState createState() => _DetailedViewState(item);
 }
 
 class _DetailedViewState extends State<DetailedView> {
   bool _render;
-  GalleryItem _galleryItem;
-  int itemIndex;
   double lastDelta;
+  int itemIndex;
+  GalleryItem item;
 
-  _DetailedViewState(this.itemIndex);
+  _DetailedViewState(this.item);
 
   @override
   void initState() {
     super.initState();
-    _galleryItem = galleryItems[itemIndex];
     _render = true;
+    itemIndex = GalleryService.indexOf(item);
   }
 
   @override
   Widget build(BuildContext context) {
-    return _render
-        ? Scaffold(
+    if (!_render) return Container();
+
+    return Scaffold(
       backgroundColor: Colors.black,
-      body: Hero(
-        tag: _galleryItem.imageName ?? '',
-        child: Stack(
-          alignment: Alignment(0.0, 1.0),
-          children: <Widget>[
-            GestureDetector(
-                onDoubleTap: _goBack,
-                onHorizontalDragUpdate: _updateLastDrag,
-                onVerticalDragEnd: (details) => _goBack(),
-                onHorizontalDragEnd: (details) => _handleHorizDrag(),
-                child: imageDisplay()),
-            Container(
-              padding: EdgeInsets.only(top: 50.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  FloatingActionButton(
-                    heroTag: null,
-                    foregroundColor: Colors.white,
-                    backgroundColor: Theme
-                        .of(context)
-                        .primaryColor,
-                    child: Icon(Icons.cloud_download, size: 40.0),
-                    onPressed: () => _download(),
-                  ),
-                  FloatingActionButton(
-                    heroTag: null,
-                    foregroundColor: Colors.white,
-                    backgroundColor: Theme
-                        .of(context)
-                        .primaryColor,
-                    child: Icon(Icons.share, size: 40.0),
-                    onPressed: () => _share(),
-                  )
-                ],
-              ),
+      body: Stack(
+        alignment: Alignment(0.0, 1.0),
+        children: <Widget>[
+          GestureDetector(
+              onDoubleTap: _goBack,
+              onHorizontalDragUpdate: _updateLastDrag,
+              onVerticalDragEnd: (details) => _goBack(),
+              onHorizontalDragEnd: (details) => _handleHorizDrag(),
+              child: imageDisplay()),
+          Container(
+            padding: EdgeInsets.only(top: 50.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                FloatingActionButton(
+                  heroTag: null,
+                  foregroundColor: Colors.white,
+                  backgroundColor: Theme.of(context).primaryColor,
+                  child: Icon(Icons.save, size: 40.0),
+                  onPressed: () => _download(),
+                ),
+                FloatingActionButton(
+                  heroTag: null,
+                  foregroundColor: Colors.white,
+                  backgroundColor: Theme.of(context).primaryColor,
+                  child: Icon(Icons.share, size: 40.0),
+                  onPressed: () => _share(),
+                )
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
-    )
-        : Container();
+    );
   }
 
   Widget imageDisplay() {
-    print('>> Displaying ${_galleryItem.imageFile == null
+    print('>> Displaying ${item.imageFile == null
         ? 'Url of'
-        : 'File'} : ${_galleryItem.imageName}');
-    return _galleryItem.imageFile != null
-        ? Image.file(_galleryItem.imageFile,
-        fit: BoxFit.contain,
-        height: double.infinity,
-        width: double.infinity,
-        alignment: Alignment.center)
-        : Image.network(_galleryItem.imageUrl,
-        fit: BoxFit.contain,
-        height: double.infinity,
-        width: double.infinity,
-        alignment: Alignment.center);
+        : 'File'} : ${item.imageName}');
+    return item.imageFile != null
+        ? Image.file(item.imageFile,
+            fit: BoxFit.contain,
+            height: double.infinity,
+            width: double.infinity,
+            alignment: Alignment.center)
+        : Image.network(item.imageUrl,
+            fit: BoxFit.contain,
+            height: double.infinity,
+            width: double.infinity,
+            alignment: Alignment.center);
   }
 
   _updateLastDrag(DragUpdateDetails details) {
@@ -120,16 +114,16 @@ class _DetailedViewState extends State<DetailedView> {
 
   _getPrevious() {
     if (itemIndex > 0)
-      setState(() => _galleryItem = galleryItems[--itemIndex]);
+      setState(() => item = GalleryService.getItem(--itemIndex));
     else
       _goBack();
   }
 
   _getNext() {
-    int maxIndex = galleryItems.length - 1;
+    int maxIndex = GalleryService.galleryItems.length - 1;
 
     if (itemIndex < maxIndex)
-      setState(() => _galleryItem = galleryItems[++itemIndex]);
+      setState(() => item = GalleryService.getItem(++itemIndex));
     else
       _goBack();
   }
@@ -141,7 +135,7 @@ class _DetailedViewState extends State<DetailedView> {
 
   _share() {
     final channel = const MethodChannel('channel:alexandre.bolot/share_image');
-    channel.invokeMethod('shareFilePath', _galleryItem.imageName);
+    channel.invokeMethod('shareFilePath', item.imageName);
   }
 
   _download() async {
@@ -168,15 +162,14 @@ class _DetailedViewState extends State<DetailedView> {
     if (!photoBoothDir.existsSync()) {
       print("PhotoBooth doesn't exist !");
       photoBoothDir.createSync();
-    }
-    else {
+    } else {
       print("PhotoBooth exists !");
     }
-    File file = File(photoBoothDir.path + _galleryItem.imageName);
+    File file = File(photoBoothDir.path + item.imageName);
 
     file.createSync();
 
-    file.writeAsBytes(_galleryItem.imageFile.readAsBytesSync());
+    file.writeAsBytes(item.imageFile.readAsBytesSync());
 
     _goBack();
   }

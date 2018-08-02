@@ -5,7 +5,7 @@
  .
  . As part of the PhotoBooth project
  .
- . Last modified : 31/07/18 14:23
+ . Last modified : 02/08/18 03:35
  .
  . Contact : contact.alexandre.bolot@gmail.com
  ........................................................................*/
@@ -13,6 +13,7 @@
 import 'package:flutter/material.dart';
 import 'package:photo_booth/config.dart';
 import 'package:photo_booth/services/gallery_service.dart';
+import 'package:photo_booth/services/user_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeView extends StatefulWidget {
@@ -92,11 +93,11 @@ class HomeViewState extends State<HomeView> {
   }
 
   _login() async {
-    final String code = _collectionNameController.text.toLowerCase().trim();
-    final String name = _userNameController.text.toLowerCase().trim();
+    String code = _collectionNameController.text.toLowerCase().trim();
+    String name = _userNameController.text.toLowerCase().trim();
 
-    GalleryService().login(code, name).then((success) {
-      if (success) Navigator.of(context).pushNamed(galleryView);
-    });
+    bool success = await UserService.login(code, name);
+
+    if (success) Navigator.of(context).pushNamed(galleryView);
   }
 }

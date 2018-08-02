@@ -5,7 +5,7 @@
  .
  . As part of the PhotoBooth project
  .
- . Last modified : 22/07/18 02:20
+ . Last modified : 02/08/18 03:35
  .
  . Contact : contact.alexandre.bolot@gmail.com
  ........................................................................*/
@@ -15,144 +15,65 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:photo_booth/models/gallery_item.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:image/image.dart' as plugin;
+import 'package:photo_booth/services/user_service.dart';
 
 class GalleryService {
-  static final FirebaseStorage _storage = FirebaseStorage.instance;
   static final Firestore _firestore = Firestore.instance;
-  static final FirebaseAuth _auth = FirebaseAuth.instance;
   static final HttpClient httpClient = HttpClient();
-  static String _collectionName;
-  static String _userName;
 
-  Future<bool> login(String code, String name) async {
-    if (code.isNotEmpty && name.isNotEmpty) {
-      await _auth.signInAnonymously();
+  static List<GalleryItem> galleryItems = [];
+  static Map<String, File> loadedImages = {};
+  static Map<String, File> loadedThumbnails = {};
 
-      _collectionName = code;
-      _userName = name;
+  static StreamSubscription<QuerySnapshot> galleryItemsStream;
 
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString('userName', _userName);
-      await prefs.setString('collectionName', _collectionName);
-
-      return true;
-    }
-    return false;
-  }
-
-  streamThumbnailPaths(void callback(List<GalleryItem> items)) {
-    _firestore.collection(_collectionName).snapshots().listen((querySnapshot) {
-      List<GalleryItem> galleryItems = [];
+  static streamGalleryItems(VoidCallback callback()) {
+    galleryItemsStream = _firestore
+        .collection(UserService.collectionName)
+        .snapshots()
+        .listen((querySnapshot) {
+      galleryItems = [];
 
       print('>> found ${querySnapshot.documents.length} picture(s)');
 
-      querySnapshot.documents.forEach((document) {
+      for (DocumentSnapshot document in querySnapshot.documents) {
         galleryItems.add(GalleryItem.fromSnapshot(document));
-      });
+      }
 
-      callback(galleryItems);
+      callback();
     });
   }
 
-  mainUpload(File fullImage) async {
-    String fileName = '$_userName${DateTime.now().toIso8601String()}';
-
-    int startTime = _getTime();
-
-    plugin.Image thumbnail = plugin.decodeJpg(fullImage.readAsBytesSync());
-
-    print('>> decoded image in ${(_getTime() - startTime) / 1000}s');
-
-    DocumentReference ref = await uploadThumbnail(thumbnail, fileName);
-
-    uploadImage(fullImage, ref, fileName);
+  static Future downloadThumbnail(String url, String name) async {
+    loadedThumbnails[url] = await _downloadFile(url, '${name}_thumbnail');
+    print('>> Downloaded Thumbnail : $name');
   }
 
-  Future uploadThumbnail(plugin.Image thumbnail, String fileName) async {
-    int startTime = _getTime();
-
-    thumbnail = plugin.copyResize(thumbnail, 400);
-
-    print('>> resized thumbnail in ${(_getTime() - startTime) / 1000}s');
-
-    File file = await createFile(thumbnail, fileName);
-
-    startTime = _getTime();
-
-    UploadTaskSnapshot uploadImage = await _storage
-        .ref()
-        .child('$_collectionName/Thumbnails/$fileName.jpg')
-        .putFile(file)
-        .future;
-
-    GalleryItem galleryItem = GalleryItem(
-      userName: _userName,
-      thumbnailUrl: uploadImage.downloadUrl.toString(),
-    );
-
-    DocumentReference ref = _firestore.collection(_collectionName).document();
-
-    await ref.setData(galleryItem.toMap());
-
-    print('>> uploaded thumbnail in ${(_getTime() - startTime) / 1000}s');
-
-    return ref;
+  static Future downloadImage(String url, String name) async {
+    loadedImages[url] = await _downloadFile(url, '${name}_image');
+    print('>> Downloaded Image : $name');
   }
 
-  Future<File> createFile(plugin.Image image, String fileName) async {
-    int startTime = _getTime();
-
-    Directory directory = await getApplicationDocumentsDirectory();
-
-    File file = File(directory.path + Platform.pathSeparator + fileName)
-      ..createSync()
-      ..writeAsBytesSync(plugin.encodeJpg(image, quality: 70));
-
-    print('>> created file in ${(_getTime() - startTime) / 1000}s');
-
-    return file;
-  }
-
-  uploadImage(File fullImage, DocumentReference ref, String fileName) async {
-    int startTime = _getTime();
-
-    UploadTaskSnapshot uploadImage = await _storage
-        .ref()
-        .child('$_collectionName/Images/$fileName.jpg')
-        .putFile(fullImage)
-        .future;
-
-    ref.updateData({
-      'imageUrl': uploadImage.downloadUrl.toString(),
-      'imageName': '$fileName.jpg',
-    });
-
-    print('>> uploaded full size image in ${(_getTime() - startTime) / 1000}s');
-  }
-
-  _getTime() => DateTime.now().millisecondsSinceEpoch;
-
-  Future<File> downloadFile(String url, String filename) async {
+  static Future<File> _downloadFile(String url, String filename) async {
     if (url != null) {
       HttpClientRequest request = await httpClient.getUrl(Uri.parse(url));
       HttpClientResponse response = await request.close();
       Uint8List bytes = await consolidateHttpClientResponseBytes(response);
 
       String dir = (await getTemporaryDirectory()).path;
-      File file = File('$dir/$filename');
 
-      print('>> Downloaded file : ${file.path}');
-
-      return await file.writeAsBytes(bytes);
+      return await File('$dir/$filename').writeAsBytes(bytes);
     }
 
     return null;
   }
+
+  static int indexOf(GalleryItem item) => galleryItems.indexOf(item);
+
+  static GalleryItem getItem(int index) => galleryItems[index];
+
+  static disposeGalleryItemsStream() => galleryItemsStream?.cancel();
 }
