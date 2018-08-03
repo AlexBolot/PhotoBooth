@@ -5,7 +5,7 @@
  .
  . As part of the PhotoBooth project
  .
- . Last modified : 02/08/18 23:13
+ . Last modified : 03/08/18 01:58
  .
  . Contact : contact.alexandre.bolot@gmail.com
  ........................................................................*/
@@ -41,7 +41,7 @@ class _GuestCardState extends State<GuestCard> {
                   style: TextStyle(color: Colors.white),
                 ),
                 color: Theme.of(context).primaryColor,
-                onPressed: () => Navigator.of(context).pushNamed(homeView),
+                onPressed: () => Navigator.of(context).pushNamed(guestView),
               ),
             ],
           ),

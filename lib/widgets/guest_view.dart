@@ -1,11 +1,11 @@
 /*.........................................................................
  . Copyright (c)
  .
- . The home_view.dart class was created by : Alex Bolot and Pierre Bolot
+ . The guest_view.dart class was created by : Alex Bolot and Pierre Bolot
  .
  . As part of the PhotoBooth project
  .
- . Last modified : 02/08/18 22:17
+ . Last modified : 03/08/18 01:58
  .
  . Contact : contact.alexandre.bolot@gmail.com
  ........................................................................*/
@@ -16,12 +16,12 @@ import 'package:photo_booth/services/gallery_service.dart';
 import 'package:photo_booth/services/user_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class HomeView extends StatefulWidget {
+class GuestView extends StatefulWidget {
   @override
-  createState() => HomeViewState();
+  createState() => _GuestViewState();
 }
 
-class HomeViewState extends State<HomeView> {
+class _GuestViewState extends State<GuestView> {
   TextEditingController _collectionNameController = TextEditingController();
   TextEditingController _userNameController = TextEditingController();
 
@@ -88,8 +88,11 @@ class HomeViewState extends State<HomeView> {
 
   _loadPreferences() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
-    _collectionNameController.text = pref.getString('collectionName') ?? '';
-    _userNameController.text = pref.getString('userName') ?? '';
+
+    setState(() {
+      _collectionNameController.text = pref.getString('collectionName') ?? '';
+      _userNameController.text = pref.getString('userName') ?? '';
+    });
   }
 
   _login() async {

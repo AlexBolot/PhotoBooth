@@ -5,33 +5,36 @@
  .
  . As part of the PhotoBooth project
  .
- . Last modified : 02/08/18 22:27
+ . Last modified : 03/08/18 01:53
  .
  . Contact : contact.alexandre.bolot@gmail.com
  ........................................................................*/
 
 class User {
-  List<String> collections = [];
+  List<String> collections;
   String userName;
-
   String email;
   String password;
 
-  User(this.userName, [this.collections, this.email, this.password]);
+  User(this.userName, {this.collections = const [], this.email, this.password});
 
   User.fromMap(Map<String, dynamic> map)
-      : collections = map['collections'],
-        userName = map['userName'];
+      : collections = map['collections'].cast<String>(),
+        userName = map['userName'],
+        email = map['email'];
 
   Map<String, dynamic> toMap() {
     return {
       'collections': collections,
       'userName': userName,
+      'email': email,
     };
   }
 
   @override
-  String toString() => 'User{userName: $userName}';
+  String toString() {
+    return 'User{userName: $userName, email: $email, collections: $collections}';
+  }
 
   @override
   bool operator ==(Object other) =>
@@ -39,8 +42,9 @@ class User {
       other is User &&
           runtimeType == other.runtimeType &&
           collections == other.collections &&
-          userName == other.userName;
+          userName == other.userName &&
+          email == other.email;
 
   @override
-  int get hashCode => collections.hashCode ^ userName.hashCode;
+  int get hashCode => collections.hashCode ^ userName.hashCode ^ email.hashCode;
 }

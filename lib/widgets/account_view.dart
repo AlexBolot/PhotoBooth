@@ -5,7 +5,7 @@
  .
  . As part of the PhotoBooth project
  .
- . Last modified : 02/08/18 23:11
+ . Last modified : 03/08/18 00:49
  .
  . Contact : contact.alexandre.bolot@gmail.com
  ........................................................................*/
@@ -13,7 +13,6 @@
 import 'package:flutter/material.dart';
 import 'package:photo_booth/widgets/minor_widgets/guest_card.dart';
 import 'package:photo_booth/widgets/minor_widgets/manager_card.dart';
-import 'package:photo_booth/widgets/minor_widgets/sign_up_card.dart';
 
 class AccountView extends StatefulWidget {
   @override
@@ -38,7 +37,7 @@ class _AccountViewState extends State<AccountView> {
         child: ListView(
           children: <Widget>[
             ConstrainedBox(
-              constraints: BoxConstraints(minHeight: 475.0),
+              constraints: BoxConstraints(minHeight: 470.0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[

@@ -5,7 +5,7 @@
  .
  . As part of the PhotoBooth project
  .
- . Last modified : 02/08/18 22:34
+ . Last modified : 03/08/18 01:32
  .
  . Contact : contact.alexandre.bolot@gmail.com
  ........................................................................*/
@@ -57,7 +57,7 @@ class UserService {
     return false;
   }
 
-  static Future<void> signUpEmail(User user) async {
+  static Future<void> signUpUser(User user) async {
     if (user.email.isNotEmpty && user.password.isNotEmpty) {
       FirebaseUser firebaseUser = await _auth.createUserWithEmailAndPassword(
         email: user.email,

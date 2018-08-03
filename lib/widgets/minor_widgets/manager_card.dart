@@ -5,13 +5,19 @@
  .
  . As part of the PhotoBooth project
  .
- . Last modified : 02/08/18 23:13
+ . Last modified : 03/08/18 02:03
  .
  . Contact : contact.alexandre.bolot@gmail.com
  ........................................................................*/
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:photo_booth/config.dart';
+import 'package:photo_booth/models/user.dart';
+import 'package:photo_booth/services/user_service.dart';
+import 'package:photo_booth/widgets/minor_widgets/sign_up_dialog.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ManagerCard extends StatefulWidget {
   @override
@@ -21,6 +27,12 @@ class ManagerCard extends StatefulWidget {
 class _ManagerCardState extends State<ManagerCard> {
   final _emailController = TextEditingController();
   final _pwdController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPreferences();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +104,7 @@ class _ManagerCardState extends State<ManagerCard> {
                     style: TextStyle(color: Colors.white),
                   ),
                   color: Theme.of(context).primaryColor,
-                  onPressed: () => Navigator.of(context).pushNamed(homeView),
+                  onPressed: () => _login(),
                 ),
               ),
             ),
@@ -113,7 +125,7 @@ class _ManagerCardState extends State<ManagerCard> {
                         decoration: TextDecoration.underline,
                       ),
                     ),
-                    onTap: () => Navigator.of(context).pushNamed(homeView),
+                    onTap: () => _showSignUpPopup(),
                   ),
                 ],
               ),
@@ -122,5 +134,38 @@ class _ManagerCardState extends State<ManagerCard> {
         ),
       ),
     );
+  }
+
+  _loadPreferences() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+
+    setState(() {
+      _emailController.text = pref.getString('email') ?? '';
+      _pwdController.text = pref.getString('password') ?? '';
+    });
+  }
+
+  _login() async {
+    String email = _emailController.text.toLowerCase().trim();
+    String password = _pwdController.text.trim();
+
+    bool success = await UserService.loginEmail(email, password);
+
+    if (success) {
+      SharedPreferences pref = await SharedPreferences.getInstance();
+      pref.setString('email', email);
+      pref.setString('password', password);
+
+      Navigator.of(context).pushNamed(guestView);
+    }
+  }
+
+  _showSignUpPopup() async {
+    User user = await showDialog<User>(
+      context: context,
+      builder: (BuildContext context) => SignUpDialog(),
+    );
+
+    if (user != null) UserService.signUpUser(user);
   }
 }
