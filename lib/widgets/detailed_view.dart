@@ -5,7 +5,7 @@
  .
  . As part of the PhotoBooth project
  .
- . Last modified : 02/08/18 15:49
+ . Last modified : 03/08/18 02:29
  .
  . Contact : contact.alexandre.bolot@gmail.com
  ........................................................................*/
@@ -52,11 +52,12 @@ class _DetailedViewState extends State<DetailedView> {
         alignment: Alignment(0.0, 1.0),
         children: <Widget>[
           GestureDetector(
-              onDoubleTap: _goBack,
-              onHorizontalDragUpdate: _updateLastDrag,
-              onVerticalDragEnd: (details) => _goBack(),
-              onHorizontalDragEnd: (details) => _handleHorizDrag(),
-              child: imageDisplay()),
+            onDoubleTap: _goBack,
+            onHorizontalDragUpdate: _updateLastDrag,
+            onVerticalDragEnd: (details) => _goBack(),
+            onHorizontalDragEnd: (details) => _handleHorizDrag(),
+            child: imageDisplay(),
+          ),
           Container(
             padding: EdgeInsets.only(top: 50.0),
             child: Row(

@@ -5,7 +5,7 @@
  .
  . As part of the PhotoBooth project
  .
- . Last modified : 03/08/18 02:03
+ . Last modified : 03/08/18 02:21
  .
  . Contact : contact.alexandre.bolot@gmail.com
  ........................................................................*/
@@ -156,7 +156,7 @@ class _ManagerCardState extends State<ManagerCard> {
       pref.setString('email', email);
       pref.setString('password', password);
 
-      Navigator.of(context).pushNamed(guestView);
+      Navigator.of(context).pushNamed(managerView);
     }
   }
 
@@ -166,6 +166,20 @@ class _ManagerCardState extends State<ManagerCard> {
       builder: (BuildContext context) => SignUpDialog(),
     );
 
-    if (user != null) UserService.signUpUser(user);
+    bool success = user != null;
+
+    if (success) {
+      success = await UserService.signUpUser(user);
+      if (success) {
+        success = await UserService.loginEmail(user.email, user.password);
+        if (success) {
+          SharedPreferences pref = await SharedPreferences.getInstance();
+          pref.setString('email', user.email);
+          pref.setString('password', user.password);
+
+          Navigator.of(context).pushNamed(managerView);
+        }
+      }
+    }
   }
 }

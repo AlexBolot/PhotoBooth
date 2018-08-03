@@ -5,23 +5,28 @@
  .
  . As part of the PhotoBooth project
  .
- . Last modified : 03/08/18 01:53
+ . Last modified : 03/08/18 04:26
  .
  . Contact : contact.alexandre.bolot@gmail.com
  ........................................................................*/
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class User {
-  List<String> collections;
+  List<String> collections = [];
+  String userId;
   String userName;
   String email;
   String password;
 
-  User(this.userName, {this.collections = const [], this.email, this.password});
+  User(this.userName, {this.email, this.password});
 
-  User.fromMap(Map<String, dynamic> map)
-      : collections = map['collections'].cast<String>(),
-        userName = map['userName'],
-        email = map['email'];
+  User.fromMap(DocumentSnapshot snap) {
+    snap.data['collections'].forEach((item) => collections.add(item.toString()));
+    userName = snap.data['userName'];
+    email = snap.data['email'];
+    userId = snap.documentID;
+  }
 
   Map<String, dynamic> toMap() {
     return {

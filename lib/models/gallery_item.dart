@@ -5,7 +5,7 @@
  .
  . As part of the PhotoBooth project
  .
- . Last modified : 02/08/18 02:47
+ . Last modified : 03/08/18 03:42
  .
  . Contact : contact.alexandre.bolot@gmail.com
  ........................................................................*/
@@ -64,7 +64,11 @@ class GalleryItem {
 
   subscribe(VoidCallback callback()) => _callback = callback;
 
-  _notifyChanges() => _callback();
+  unsubscribe() => _callback = null;
+
+  _notifyChanges() {
+    if (_callback != null) _callback();
+  }
 
   Map<String, dynamic> toMap() {
     return {

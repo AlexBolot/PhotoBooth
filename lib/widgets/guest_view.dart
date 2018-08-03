@@ -5,7 +5,7 @@
  .
  . As part of the PhotoBooth project
  .
- . Last modified : 03/08/18 01:58
+ . Last modified : 03/08/18 02:30
  .
  . Contact : contact.alexandre.bolot@gmail.com
  ........................................................................*/
@@ -36,9 +36,9 @@ class _GuestViewState extends State<GuestView> {
     return Scaffold(
       appBar: AppBar(
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(40.0),
+          preferredSize: const Size.fromHeight(25.0),
           child: ConstrainedBox(
-            constraints: BoxConstraints(maxHeight: 95.0),
+            constraints: BoxConstraints(maxHeight: 80.0),
             child: Image.asset('assets/PhotoBoothLogo.png', fit: BoxFit.cover),
           ),
         ),

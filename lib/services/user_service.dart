@@ -5,7 +5,7 @@
  .
  . As part of the PhotoBooth project
  .
- . Last modified : 03/08/18 01:32
+ . Last modified : 03/08/18 04:32
  .
  . Contact : contact.alexandre.bolot@gmail.com
  ........................................................................*/
@@ -31,10 +31,6 @@ class UserService {
       collectionName = code;
       userName = name;
 
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString('userName', userName);
-      await prefs.setString('collectionName', collectionName);
-
       return true;
     }
     return false;
@@ -50,14 +46,14 @@ class UserService {
       DocumentSnapshot documentSnapshot =
           await _firestore.collection('Users').document(firebaseUser.uid).get();
 
-      currentUser = User.fromMap(documentSnapshot.data);
+      currentUser = User.fromMap(documentSnapshot);
 
       return true;
     }
     return false;
   }
 
-  static Future<void> signUpUser(User user) async {
+  static Future<bool> signUpUser(User user) async {
     if (user.email.isNotEmpty && user.password.isNotEmpty) {
       FirebaseUser firebaseUser = await _auth.createUserWithEmailAndPassword(
         email: user.email,
@@ -70,6 +66,18 @@ class UserService {
           .setData(user.toMap());
 
       currentUser = user;
+
+      return true;
+    }
+    return false;
+  }
+
+  static Future<bool> addCollection(String collectionName) async {
+    if (collectionName.isNotEmpty) {
+      _firestore
+          .collection('Users')
+          .document(currentUser.userId)
+          .updateData({'collections': currentUser.collections});
 
       return true;
     }

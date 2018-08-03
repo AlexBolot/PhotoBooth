@@ -5,7 +5,7 @@
  .
  . As part of the PhotoBooth project
  .
- . Last modified : 02/08/18 03:35
+ . Last modified : 03/08/18 03:40
  .
  . Contact : contact.alexandre.bolot@gmail.com
  ........................................................................*/
@@ -70,6 +70,4 @@ class _GalleryViewState extends State<GalleryView> {
       floatingActionButton: button,
     );
   }
-
-
 }

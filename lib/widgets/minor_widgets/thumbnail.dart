@@ -5,7 +5,7 @@
  .
  . As part of the PhotoBooth project
  .
- . Last modified : 02/08/18 02:16
+ . Last modified : 03/08/18 03:41
  .
  . Contact : contact.alexandre.bolot@gmail.com
  ........................................................................*/
@@ -38,7 +38,7 @@ class _ThumbnailState extends State<Thumbnail> {
   @override
   void dispose() {
     super.dispose();
-    print('dispose thumbnail element');
+    widget.item.unsubscribe();
   }
 
   @override
