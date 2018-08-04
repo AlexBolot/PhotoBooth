@@ -5,7 +5,7 @@
  .
  . As part of the PhotoBooth project
  .
- . Last modified : 03/08/18 04:32
+ . Last modified : 04/08/18 04:21
  .
  . Contact : contact.alexandre.bolot@gmail.com
  ........................................................................*/
@@ -15,6 +15,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:photo_booth/models/user.dart';
+import 'package:photo_booth/services/gallery_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserService {
@@ -24,14 +25,19 @@ class UserService {
   static String userName;
   static User currentUser;
 
-  static Future<bool> loginAnonymously(String code, String name) async {
-    if (code.isNotEmpty && name.isNotEmpty) {
-      await _auth.signInAnonymously();
+  static Future<bool> loginAnonymously(
+      String collectionName, String userName) async {
+    if (collectionName.isNotEmpty && userName.isNotEmpty) {
+      bool hasCollection = await GalleryService.hasCollection(collectionName);
 
-      collectionName = code;
-      userName = name;
+      if (hasCollection) {
+        await _auth.signInAnonymously();
 
-      return true;
+        UserService.collectionName = collectionName;
+        UserService.userName = userName;
+
+        return true;
+      }
     }
     return false;
   }
@@ -47,6 +53,7 @@ class UserService {
           await _firestore.collection('Users').document(firebaseUser.uid).get();
 
       currentUser = User.fromMap(documentSnapshot);
+      userName = currentUser.userName;
 
       return true;
     }

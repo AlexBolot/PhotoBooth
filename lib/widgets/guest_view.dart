@@ -5,7 +5,7 @@
  .
  . As part of the PhotoBooth project
  .
- . Last modified : 03/08/18 02:30
+ . Last modified : 04/08/18 03:41
  .
  . Contact : contact.alexandre.bolot@gmail.com
  ........................................................................*/
@@ -96,10 +96,10 @@ class _GuestViewState extends State<GuestView> {
   }
 
   _login() async {
-    String code = _collectionNameController.text.toLowerCase().trim();
-    String name = _userNameController.text.toLowerCase().trim();
+    String collectionName = _collectionNameController.text.toLowerCase().trim();
+    String userName = _userNameController.text.toLowerCase().trim();
 
-    bool success = await UserService.loginAnonymously(code, name);
+    bool success = await UserService.loginAnonymously(collectionName, userName);
 
     if (success) Navigator.of(context).pushNamed(galleryView);
   }

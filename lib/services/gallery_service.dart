@@ -5,7 +5,7 @@
  .
  . As part of the PhotoBooth project
  .
- . Last modified : 02/08/18 15:49
+ . Last modified : 04/08/18 04:25
  .
  . Contact : contact.alexandre.bolot@gmail.com
  ........................................................................*/
@@ -21,6 +21,7 @@ import 'package:photo_booth/models/gallery_item.dart';
 import 'package:photo_booth/services/user_service.dart';
 
 class GalleryService {
+  static StreamSubscription<QuerySnapshot> galleryItemsStream;
   static final Firestore _firestore = Firestore.instance;
   static final HttpClient httpClient = HttpClient();
 
@@ -28,7 +29,7 @@ class GalleryService {
   static Map<String, File> loadedImages = {};
   static Map<String, File> loadedThumbnails = {};
 
-  static StreamSubscription<QuerySnapshot> galleryItemsStream;
+  //========== Gallery Streaming ==========//
 
   static streamGalleryItems(VoidCallback callback()) {
     galleryItemsStream = _firestore
@@ -46,6 +47,29 @@ class GalleryService {
       callback();
     });
   }
+
+  static disposeGalleryItemsStream() => galleryItemsStream?.cancel();
+
+  //========== GalleryItem management ==========//
+
+  static GalleryItem getNext(GalleryItem item) {
+    int maxIndex = galleryItems.length - 1;
+    int itemIndex = galleryItems.indexOf(item);
+
+    return itemIndex < maxIndex ? getItem(++itemIndex) : null;
+  }
+
+  static GalleryItem getPrevious(GalleryItem item) {
+    int itemIndex = galleryItems.indexOf(item);
+
+    return itemIndex > 0 ? getItem(--itemIndex) : null;
+  }
+
+  static int indexOf(GalleryItem item) => galleryItems.indexOf(item);
+
+  static GalleryItem getItem(int index) => galleryItems[index];
+
+  //========== File temporary download ==========//
 
   static Future downloadThumbnail(String url, String name) async {
     loadedThumbnails[url] = await _downloadFile(url, '${name}_thumbnail');
@@ -71,22 +95,26 @@ class GalleryService {
     return null;
   }
 
-  static GalleryItem getNext(GalleryItem item) {
-    int maxIndex = galleryItems.length - 1;
-    int itemIndex = galleryItems.indexOf(item);
+  //========== Collection management ==========//
 
-    return itemIndex < maxIndex ? getItem(++itemIndex) : null;
+  static Future<bool> hasCollection(String collectionName) async {
+    DocumentSnapshot snapshot = await _firestore
+        .collection('Collections')
+        .document(collectionName)
+        .get();
+
+    return snapshot.exists;
   }
 
-  static GalleryItem getPrevious(GalleryItem item) {
-    int itemIndex = galleryItems.indexOf(item);
+  static loadCollection(String collectionName) async {
+    bool hasCollection = await GalleryService.hasCollection(collectionName);
+    UserService.collectionName = collectionName;
 
-    return itemIndex > 0 ? getItem(--itemIndex) : null;
+    if (!hasCollection) {
+      _firestore
+          .collection('Collections')
+          .document(collectionName)
+          .setData({'created-by': UserService.userName});
+    }
   }
-
-  static int indexOf(GalleryItem item) => galleryItems.indexOf(item);
-
-  static GalleryItem getItem(int index) => galleryItems[index];
-
-  static disposeGalleryItemsStream() => galleryItemsStream?.cancel();
 }

@@ -5,7 +5,7 @@
  .
  . As part of the PhotoBooth project
  .
- . Last modified : 03/08/18 04:37
+ . Last modified : 04/08/18 04:00
  .
  . Contact : contact.alexandre.bolot@gmail.com
  ........................................................................*/
@@ -13,6 +13,7 @@
 import 'package:flutter/material.dart';
 import 'package:photo_booth/config.dart';
 import 'package:photo_booth/models/user.dart';
+import 'package:photo_booth/services/gallery_service.dart';
 import 'package:photo_booth/services/user_service.dart';
 
 class ManagerView extends StatefulWidget {
@@ -104,11 +105,7 @@ class _ManagerViewState extends State<ManagerView> {
   }
 
   _loadCollection(String collectionName) async {
-    String userName = UserService.currentUser.userName;
-
-    UserService.collectionName = collectionName;
-    UserService.userName = userName;
-
+    GalleryService.loadCollection(collectionName);
     Navigator.of(context).pushNamed(galleryView);
   }
 }
