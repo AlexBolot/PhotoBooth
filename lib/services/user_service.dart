@@ -5,7 +5,7 @@
  .
  . As part of the PhotoBooth project
  .
- . Last modified : 04/08/18 04:21
+ . Last modified : 04/08/18 18:46
  .
  . Contact : contact.alexandre.bolot@gmail.com
  ........................................................................*/
@@ -21,7 +21,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 class UserService {
   static final FirebaseAuth _auth = FirebaseAuth.instance;
   static final Firestore _firestore = Firestore.instance;
-  static String collectionName;
   static String userName;
   static User currentUser;
 
@@ -33,7 +32,7 @@ class UserService {
       if (hasCollection) {
         await _auth.signInAnonymously();
 
-        UserService.collectionName = collectionName;
+        GalleryService.collectionName = collectionName;
         UserService.userName = userName;
 
         return true;

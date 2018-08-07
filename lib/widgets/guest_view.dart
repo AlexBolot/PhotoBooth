@@ -5,7 +5,7 @@
  .
  . As part of the PhotoBooth project
  .
- . Last modified : 04/08/18 03:41
+ . Last modified : 04/08/18 13:49
  .
  . Contact : contact.alexandre.bolot@gmail.com
  ........................................................................*/
@@ -25,10 +25,13 @@ class _GuestViewState extends State<GuestView> {
   TextEditingController _collectionNameController = TextEditingController();
   TextEditingController _userNameController = TextEditingController();
 
+  final _formKey = GlobalKey<FormState>();
+
   @override
   void initState() {
     super.initState();
     _loadPreferences();
+    GalleryService.loadCollectionsList();
   }
 
   @override
@@ -43,42 +46,49 @@ class _GuestViewState extends State<GuestView> {
           ),
         ),
       ),
-      body: Center(
-        child: Card(
-          elevation: 8.0,
-          margin: EdgeInsets.symmetric(horizontal: 40.0),
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 16.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  child: TextField(
-                    controller: _collectionNameController,
-                    decoration: InputDecoration(
-                      labelText: "Code de l'évènement",
+      body: Form(
+        key: _formKey,
+        child: Center(
+          child: Card(
+            elevation: 8.0,
+            margin: EdgeInsets.symmetric(horizontal: 40.0),
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    child: TextFormField(
+                      validator: mustExist,
+                      controller: _collectionNameController,
+                      decoration: InputDecoration(
+                        labelText: "Code de l'évènement",
+                      ),
                     ),
+                    margin: EdgeInsets.only(bottom: 14.0),
                   ),
-                  margin: EdgeInsets.only(bottom: 14.0),
-                ),
-                Container(
-                  child: TextField(
-                    controller: _userNameController,
-                    decoration: InputDecoration(
-                      labelText: "Nom et Prénom",
+                  Container(
+                    child: TextFormField(
+                      validator: notEmpty,
+                      controller: _userNameController,
+                      decoration: InputDecoration(
+                        labelText: "Nom et Prénom",
+                      ),
                     ),
+                    margin: EdgeInsets.only(bottom: 14.0),
                   ),
-                  margin: EdgeInsets.only(bottom: 14.0),
-                ),
-                RaisedButton(
-                  color: Theme.of(context).primaryColor,
-                  child: Text(
-                    "C'est parti !",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onPressed: _login,
-                )
-              ],
+                  RaisedButton(
+                    color: Theme.of(context).primaryColor,
+                    child: Text(
+                      "C'est parti !",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    onPressed: () {
+                      if (_formKey.currentState.validate()) _login();
+                    },
+                  )
+                ],
+              ),
             ),
           ),
         ),

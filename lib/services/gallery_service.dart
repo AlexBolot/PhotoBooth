@@ -5,7 +5,7 @@
  .
  . As part of the PhotoBooth project
  .
- . Last modified : 04/08/18 04:25
+ . Last modified : 04/08/18 18:52
  .
  . Contact : contact.alexandre.bolot@gmail.com
  ........................................................................*/
@@ -25,6 +25,8 @@ class GalleryService {
   static final Firestore _firestore = Firestore.instance;
   static final HttpClient httpClient = HttpClient();
 
+  static List<String> collectionNames = [];
+  static String collectionName;
   static List<GalleryItem> galleryItems = [];
   static Map<String, File> loadedImages = {};
   static Map<String, File> loadedThumbnails = {};
@@ -33,7 +35,7 @@ class GalleryService {
 
   static streamGalleryItems(VoidCallback callback()) {
     galleryItemsStream = _firestore
-        .collection(UserService.collectionName)
+        .collection(collectionName)
         .snapshots()
         .listen((querySnapshot) {
       galleryItems = [];
@@ -97,6 +99,14 @@ class GalleryService {
 
   //========== Collection management ==========//
 
+  static loadCollectionsList() async {
+    _firestore.collection('Collections').getDocuments().then((querySnapshot) {
+      for (DocumentSnapshot document in querySnapshot.documents) {
+        collectionNames.add(document.documentID);
+      }
+    });
+  }
+
   static Future<bool> hasCollection(String collectionName) async {
     DocumentSnapshot snapshot = await _firestore
         .collection('Collections')
@@ -106,9 +116,9 @@ class GalleryService {
     return snapshot.exists;
   }
 
-  static loadCollection(String collectionName) async {
+  static Future loadCollection(String collectionName) async {
     bool hasCollection = await GalleryService.hasCollection(collectionName);
-    UserService.collectionName = collectionName;
+    GalleryService.collectionName = collectionName;
 
     if (!hasCollection) {
       _firestore

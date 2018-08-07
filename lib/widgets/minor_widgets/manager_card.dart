@@ -5,7 +5,7 @@
  .
  . As part of the PhotoBooth project
  .
- . Last modified : 03/08/18 02:21
+ . Last modified : 05/08/18 17:31
  .
  . Contact : contact.alexandre.bolot@gmail.com
  ........................................................................*/
@@ -28,6 +28,8 @@ class _ManagerCardState extends State<ManagerCard> {
   final _emailController = TextEditingController();
   final _pwdController = TextEditingController();
 
+  final _formKey = GlobalKey<FormState>();
+
   @override
   void initState() {
     super.initState();
@@ -36,101 +38,108 @@ class _ManagerCardState extends State<ManagerCard> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 8.0,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-        child: Column(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(top: 16.0),
-              child: Text(
-                'Compte organisateur',
-                style: TextStyle(fontSize: 20.0),
-              ),
-            ),
-            Row(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(top: 8.0, right: 4.0),
-                  child: Center(
-                    child: Icon(
-                      Icons.person,
-                      size: 32.0,
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: TextField(
-                    controller: _emailController,
-                    decoration: InputDecoration(
-                      labelText: 'Email',
-                      isDense: true,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              children: <Widget>[
-                Padding(
-                  padding:
-                      const EdgeInsets.only(top: 8.0, left: 2.0, right: 6.0),
-                  child: Center(
-                    child: Icon(
-                      Icons.lock,
-                      size: 28.0,
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: TextField(
-                    controller: _pwdController,
-                    decoration: InputDecoration(
-                      labelText: 'Mot de passe',
-                      isDense: true,
-                    ),
-                    obscureText: true,
-                  ),
-                ),
-              ],
-            ),
-            Container(
-              margin: EdgeInsets.symmetric(vertical: 16.0),
-              child: Center(
-                child: RaisedButton(
-                  child: Text(
-                    'Se connecter',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  color: Theme.of(context).primaryColor,
-                  onPressed: () => _login(),
+    return Form(
+      key: _formKey,
+      child: Card(
+        elevation: 8.0,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          child: Column(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(top: 16.0),
+                child: Text(
+                  'Compte organisateur',
+                  style: TextStyle(fontSize: 20.0),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+              Row(
                 children: <Widget>[
-                  Text(
-                    'Devenir organisateur : ',
-                    style: TextStyle(fontSize: 16.0),
-                  ),
-                  GestureDetector(
-                    child: Text(
-                      'Je m\'inscris !',
-                      style: TextStyle(
-                        fontSize: 16.0,
-                        decoration: TextDecoration.underline,
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0, right: 4.0),
+                    child: Center(
+                      child: Icon(
+                        Icons.person,
+                        size: 32.0,
                       ),
                     ),
-                    onTap: () => _showSignUpPopup(),
+                  ),
+                  Expanded(
+                    child: TextFormField(
+                      validator: isEmail,
+                      controller: _emailController,
+                      decoration: InputDecoration(
+                        labelText: 'Email',
+                        isDense: true,
+                      ),
+                    ),
                   ),
                 ],
               ),
-            ),
-          ],
+              Row(
+                children: <Widget>[
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(top: 8.0, left: 2.0, right: 6.0),
+                    child: Center(
+                      child: Icon(
+                        Icons.lock,
+                        size: 28.0,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: TextFormField(
+                      validator: validPassword,
+                      controller: _pwdController,
+                      decoration: InputDecoration(
+                        labelText: 'Mot de passe',
+                        isDense: true,
+                      ),
+                      obscureText: true,
+                    ),
+                  ),
+                ],
+              ),
+              Container(
+                margin: EdgeInsets.symmetric(vertical: 16.0),
+                child: Center(
+                  child: RaisedButton(
+                    child: Text(
+                      'Se connecter',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    color: Theme.of(context).primaryColor,
+                    onPressed: () {
+                      if (_formKey.currentState.validate()) _login();
+                    },
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: <Widget>[
+                    Text(
+                      'Devenir organisateur : ',
+                      style: TextStyle(fontSize: 16.0),
+                    ),
+                    GestureDetector(
+                      child: Text(
+                        'Je m\'inscris !',
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                      onTap: () => _showSignUpPopup(),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -5,7 +5,7 @@
  .
  . As part of the PhotoBooth project
  .
- . Last modified : 02/08/18 02:43
+ . Last modified : 04/08/18 18:46
  .
  . Contact : contact.alexandre.bolot@gmail.com
  ........................................................................*/
@@ -53,7 +53,7 @@ class UploadService {
     GalleryService.galleryItems.add(item);
 
     _firestore
-        .collection(UserService.collectionName)
+        .collection(GalleryService.collectionName)
         .document()
         .setData(item.toMap());
   }
@@ -85,7 +85,7 @@ class UploadService {
 
     UploadTaskSnapshot uploadImage = await _storage
         .ref()
-        .child('${UserService.collectionName}/Thumbnails/$fileName.jpg')
+        .child('${GalleryService.collectionName}/Thumbnails/$fileName.jpg')
         .putFile(thumbnail)
         .future;
 
@@ -99,7 +99,7 @@ class UploadService {
 
     UploadTaskSnapshot uploadImage = await _storage
         .ref()
-        .child('${UserService.collectionName}/Images/$fileName.jpg')
+        .child('${GalleryService.collectionName}/Images/$fileName.jpg')
         .putFile(fullImage)
         .future;
 
