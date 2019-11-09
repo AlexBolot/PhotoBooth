@@ -10,3 +10,5 @@ build/
 .idea/
 app/src/main/java/io/
 /android/key.properties
+
+photo_booth_android.iml
