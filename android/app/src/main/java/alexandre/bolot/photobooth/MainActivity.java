@@ -5,7 +5,7 @@
  .
  . As part of the PhotoBooth project
  .
- . Last modified : 30/07/18 00:21
+ . Last modified : 11/9/19 9:50 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  ........................................................................*/
@@ -19,6 +19,9 @@ import android.os.Bundle;
 import android.support.v4.content.FileProvider;
 
 import java.io.File;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
 
 import io.flutter.app.FlutterActivity;
 import io.flutter.plugin.common.MethodChannel;

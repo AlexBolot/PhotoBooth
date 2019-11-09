@@ -5,7 +5,7 @@
  .
  . As part of the PhotoBooth project
  .
- . Last modified : 04/08/18 18:46
+ . Last modified : 11/9/19 9:50 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  ........................................................................*/
@@ -16,7 +16,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:photo_booth/models/user.dart';
 import 'package:photo_booth/services/gallery_service.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class UserService {
   static final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -24,8 +23,7 @@ class UserService {
   static String userName;
   static User currentUser;
 
-  static Future<bool> loginAnonymously(
-      String collectionName, String userName) async {
+  static Future<bool> loginAnonymously(String collectionName, String userName) async {
     if (collectionName.isNotEmpty && userName.isNotEmpty) {
       bool hasCollection = await GalleryService.hasCollection(collectionName);
 

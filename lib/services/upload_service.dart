@@ -5,7 +5,7 @@
  .
  . As part of the PhotoBooth project
  .
- . Last modified : 04/08/18 18:46
+ . Last modified : 9/17/18 12:08 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  ........................................................................*/
@@ -26,8 +26,7 @@ class UploadService {
   static final Firestore _firestore = Firestore.instance;
 
   static uploadGalleryItem(File fullImage) async {
-    String fileName = '${UserService.userName}${DateTime.now()
-        .toIso8601String()}';
+    String fileName = '${UserService.userName}${DateTime.now().toIso8601String()}';
 
     int startTime = getTime();
 

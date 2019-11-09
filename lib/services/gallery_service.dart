@@ -5,7 +5,7 @@
  .
  . As part of the PhotoBooth project
  .
- . Last modified : 04/08/18 18:52
+ . Last modified : 1/12/19 3:22 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  ........................................................................*/
@@ -33,7 +33,7 @@ class GalleryService {
 
   //========== Gallery Streaming ==========//
 
-  static streamGalleryItems(VoidCallback callback()) {
+  static streamGalleryItems(VoidCallback callback) {
     galleryItemsStream = _firestore
         .collection(collectionName)
         .snapshots()

@@ -5,7 +5,7 @@
  .
  . As part of the PhotoBooth project
  .
- . Last modified : 04/08/18 18:46
+ . Last modified : 11/9/19 9:50 PM
  .
  . Contact : contact.alexandre.bolot@gmail.com
  ........................................................................*/
@@ -13,11 +13,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:photo_booth/models/gallery_item.dart';
 import 'package:photo_booth/services/gallery_service.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:photo_booth/services/upload_service.dart';
-import 'package:photo_booth/services/user_service.dart';
 import 'package:photo_booth/widgets/minor_widgets/thumbnail.dart';
 
 class GalleryView extends StatefulWidget {

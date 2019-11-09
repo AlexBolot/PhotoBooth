@@ -29,15 +29,11 @@
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAoMof_FKm96EakIUcfM8UahFLfi-1dOnE"
+          "current_key": "AIzaSyAqkAC9IFCa0ZrdVJpUlACSzGkVBpqg6lk"
         }
       ],
       "services": {
-        "analytics_service": {
-          "status": 1
-        },
         "appinvite_service": {
-          "status": 2,
           "other_platform_oauth_client": [
             {
               "client_id": "1003739972674-a17psvroqlss04tsdiftb7acpjgmh9r6.apps.googleusercontent.com",
@@ -47,13 +43,10 @@
               "client_id": "1003739972674-pbhu24rirvarcqpoi2dtjohbsdode9ru.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "bolot.alexandre.photobooth"
+                "bundle_id": "bolot.alexandre"
               }
             }
           ]
-        },
-        "ads_service": {
-          "status": 2
         }
       }
     }
